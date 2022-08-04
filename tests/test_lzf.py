@@ -5,23 +5,23 @@ from yxdb._lzf import _Lzf
 
 class TestLzf(unittest.TestCase):
     def test_empty_input(self):
-        in_bytes = bytearray(0)
-        out_bytes = bytearray(0)
+        in_bytes = memoryview(bytearray(0))
+        out_bytes = memoryview(bytearray(0))
         lzf = _Lzf(in_bytes, out_bytes)
 
         written = lzf.decompress(0)
         self.assertEqual(0, written)
 
     def test_output_array_is_too_small(self):
-        in_bytes = bytearray([0, 25])
-        out_bytes = bytearray([])
+        in_bytes = memoryview(bytearray([0, 25]))
+        out_bytes = memoryview(bytearray([]))
         lzf = _Lzf(in_bytes, out_bytes)
 
         self.assertRaises(AttributeError, lambda: lzf.decompress(2))
 
     def test_small_control_values_do_simple_copies(self):
-        in_bytes = bytearray([4, 1, 2, 3, 4, 5])
-        out_bytes = bytearray(5)
+        in_bytes = memoryview(bytearray([4, 1, 2, 3, 4, 5]))
+        out_bytes = memoryview(bytearray(5))
         lzf = _Lzf(in_bytes, out_bytes)
 
         written = lzf.decompress(6)
@@ -29,8 +29,8 @@ class TestLzf(unittest.TestCase):
         self.assertEqual(bytearray([1, 2, 3, 4, 5]), out_bytes)
 
     def test_multiple_small_control_values(self):
-        in_bytes = bytearray([2, 1, 2, 3, 1, 1, 2])
-        out_bytes = bytearray(5)
+        in_bytes = memoryview(bytearray([2, 1, 2, 3, 1, 1, 2]))
+        out_bytes = memoryview(bytearray(5))
         lzf = _Lzf(in_bytes, out_bytes)
 
         written = lzf.decompress(7)
@@ -38,8 +38,8 @@ class TestLzf(unittest.TestCase):
         self.assertEqual(bytearray([1, 2, 3, 1, 2]), out_bytes)
 
     def test_expand_large_control_values(self):
-        in_bytes = bytearray([2, 1, 2, 3, 32, 1])
-        out_bytes = bytearray(6)
+        in_bytes = memoryview(bytearray([2, 1, 2, 3, 32, 1]))
+        out_bytes = memoryview(bytearray(6))
         lzf = _Lzf(in_bytes, out_bytes)
 
         written = lzf.decompress(6)
@@ -47,8 +47,8 @@ class TestLzf(unittest.TestCase):
         self.assertEqual(bytearray([1, 2, 3, 2, 3, 2]), out_bytes)
 
     def test_large_control_values_with_length_of_7(self):
-        in_bytes = bytearray([8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 224, 1, 8])
-        out_bytes = bytearray(19)
+        in_bytes = memoryview(bytearray([8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 224, 1, 8]))
+        out_bytes = memoryview(bytearray(19))
         lzf = _Lzf(in_bytes, out_bytes)
 
         written = lzf.decompress(13)
@@ -56,15 +56,15 @@ class TestLzf(unittest.TestCase):
         self.assertEqual(bytearray([1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1]), out_bytes)
 
     def test_output_array_too_small_for_large_control_value(self):
-        in_bytes = bytearray([8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 224, 1, 8])
-        out_bytes = bytearray(17)
+        in_bytes = memoryview(bytearray([8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 224, 1, 8]))
+        out_bytes = memoryview(bytearray(17))
         lzf = _Lzf(in_bytes, out_bytes)
 
         self.assertRaises(AttributeError, lambda: lzf.decompress(13))
 
     def test_reset_lzf_and_start_again(self):
-        in_bytes = bytearray([4, 1, 2, 3, 4, 5])
-        out_bytes = bytearray(5)
+        in_bytes = memoryview(bytearray([4, 1, 2, 3, 4, 5]))
+        out_bytes = memoryview(bytearray(5))
         lzf = _Lzf(in_bytes, out_bytes)
 
         lzf.decompress(6)

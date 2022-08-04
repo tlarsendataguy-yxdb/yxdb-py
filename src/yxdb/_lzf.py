@@ -1,5 +1,5 @@
 class _Lzf:
-    def __init__(self, in_bytes: bytearray, out_bytes: bytearray):
+    def __init__(self, in_bytes: memoryview, out_bytes: memoryview):
         self.in_bytes = in_bytes
         self.out_bytes = out_bytes
         self.iidx = 0
