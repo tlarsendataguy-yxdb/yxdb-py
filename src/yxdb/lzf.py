@@ -1,4 +1,4 @@
-class Lzf:
+class _Lzf:
     def __init__(self, in_bytes: bytearray, out_bytes: bytearray):
         self.in_bytes = in_bytes
         self.out_bytes = out_bytes
