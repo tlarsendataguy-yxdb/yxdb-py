@@ -1,6 +1,6 @@
 import unittest
 
-from yxdb.lzf import _Lzf
+from yxdb._lzf import _Lzf
 
 
 class TestLzf(unittest.TestCase):
