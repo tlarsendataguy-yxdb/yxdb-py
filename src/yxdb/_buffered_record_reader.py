@@ -40,7 +40,7 @@ class _BufferedRecordReader:
         var_length = int.from_bytes(self.record_buffer[self.record_buffer_index-4:self.record_buffer_index], "little")
         if self.fixed_len + 4 + var_length > len(self.record_buffer):
             new_length = (self.fixed_len + 4 + var_length) * 2
-            new_buffer = bytearray(new_length)
+            new_buffer = memoryview(bytearray(new_length))
             new_buffer[:self.fixed_len+4] = self.record_buffer[:self.fixed_len+4]
             self.record_buffer = new_buffer
         self._read(var_length)
