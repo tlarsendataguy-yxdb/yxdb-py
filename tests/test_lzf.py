@@ -12,15 +12,6 @@ class TestLzf(unittest.TestCase):
         written = lzf.decompress(0)
         self.assertEqual(0, written)
 
-    def test_small_control_values_do_simple_copies(self):
-        in_bytes = bytearray([0, 25])
-        out_bytes = bytearray(1)
-        lzf = Lzf(in_bytes, out_bytes)
-
-        written = lzf.decompress(2)
-        self.assertEqual(1, written)
-        self.assertEqual(25, out_bytes[0])
-
     def test_output_array_is_too_small(self):
         in_bytes = bytearray([0, 25])
         out_bytes = bytearray([])
@@ -28,7 +19,7 @@ class TestLzf(unittest.TestCase):
 
         self.assertRaises(AttributeError, lambda: lzf.decompress(2))
 
-    def test_larger_small_control_value(self):
+    def test_small_control_values_do_simple_copies(self):
         in_bytes = bytearray([4, 1, 2, 3, 4, 5])
         out_bytes = bytearray(5)
         lzf = Lzf(in_bytes, out_bytes)
