@@ -79,7 +79,7 @@ class YxdbRecord:
                 start_at += 20
                 break
             if field.data_type == "Bool":
-                self._add_extractor(field.name, DataType.BOOL, _extractors.new_bool_extractor(start_at))
+                self._add_extractor(field.name, DataType.BOOLEAN, _extractors.new_bool_extractor(start_at))
                 start_at += 1
                 break
             if field.data_type == "Byte":
