@@ -174,6 +174,36 @@ class TestExtractors(unittest.TestCase):
         result = extract(memview([0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8]))
         self.assertEqual(None, result)
 
+    def test_extract_v_string(self):
+        extract = new_v_string_extractor(6)
+        result = extract(memview(small_blob))
+        self.assertEqual("B" * 100, result)
+
+    def test_extract_null_v_string(self):
+        extract = new_v_string_extractor(2)
+        result = extract(memview([0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8]))
+        self.assertEqual(None, result)
+
+    def test_extract_empty_v_string(self):
+        extract = new_v_string_extractor(2)
+        result = extract(memview([0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8]))
+        self.assertEqual("", result)
+
+    def test_extract_v_wstring(self):
+        extract = new_v_wstring_extractor(2)
+        result = extract(memview(normal_blob))
+        self.assertEqual("A" * 100, result)
+
+    def test_extract_null_v_wstring(self):
+        extract = new_v_wstring_extractor(2)
+        result = extract(memview([0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8]))
+        self.assertEqual(None, result)
+
+    def test_extract_empty_v_wstring(self):
+        extract = new_v_wstring_extractor(2)
+        result = extract(memview([0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8]))
+        self.assertEqual('', result)
+
 
 def memview(data):
     return memoryview(bytes(data))
