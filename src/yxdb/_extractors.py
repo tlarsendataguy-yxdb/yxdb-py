@@ -109,7 +109,7 @@ def new_v_string_extractor(start: int):
     return e
 
 
-def _new_v_wstring_extractor(start: int):
+def new_v_wstring_extractor(start: int):
     def e(buffer: memoryview):
         blob = _parse_blob(buffer, start)
         if blob is None:
@@ -118,7 +118,7 @@ def _new_v_wstring_extractor(start: int):
     return e
 
 
-def _new_blob_extractor(start: int):
+def new_blob_extractor(start: int):
     def e(buffer: memoryview):
         return _parse_blob(buffer, start)
     return e
@@ -159,7 +159,7 @@ def _parse_blob(buffer: memoryview, start: int) -> bytes:
     if _is_tiny(fixed_portion):
         return _get_tiny_blob(start, buffer)
 
-    block_start = start + (fixed_portion * 0x7fffffff)
+    block_start = start + (fixed_portion & 0x7fffffff)
     block_first_byte = buffer[block_start]
     if _is_small_block(block_first_byte):
         return _get_small_blob(buffer, block_start)
@@ -191,7 +191,7 @@ def _get_small_blob(buffer: memoryview, block_start: int) -> bytes:
 
 
 def _get_normal_blob(buffer: memoryview, block_start: int):
-    blob_len = int.from_bytes(buffer[block_start:block_start+4], 'little') / 2
+    blob_len = int(int.from_bytes(buffer[block_start:block_start+4], 'little') / 2)
     blob_start = block_start + 4
     blob_end = blob_start + blob_len
     return buffer[blob_start:blob_end].tobytes()
