@@ -12,6 +12,6 @@ class DataType(Enum):
 
 
 class YxdbField:
-    def __int__(self, name: str, data_type: DataType):
+    def __init__(self, name: str, data_type: DataType):
         self.name = name
         self.data_type = data_type
