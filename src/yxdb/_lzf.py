@@ -1,4 +1,4 @@
-class _Lzf:
+class Lzf:
     def __init__(self, in_bytes: memoryview, out_bytes: memoryview):
         self.in_bytes = in_bytes
         self.out_bytes = out_bytes
@@ -8,7 +8,7 @@ class _Lzf:
 
     def decompress(self, length: int) -> int:
         self.in_len = length
-        self._reset()
+        self.reset()
 
         if self.in_len == 0:
             return 0
@@ -24,7 +24,7 @@ class _Lzf:
 
         return self.oidx
 
-    def _reset(self):
+    def reset(self):
         self.iidx = 0
         self.oidx = 0
 

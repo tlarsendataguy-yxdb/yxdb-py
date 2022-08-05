@@ -1,9 +1,10 @@
 from io import BytesIO
 
-from yxdb._lzf import _Lzf
+from yxdb._lzf import Lzf
+from yxdb._utility import memview
 
 
-class _BufferedRecordReader:
+class BufferedRecordReader:
     def __init__(self, stream: BytesIO, fixed_len: int, has_var_fields: bool, total_records: int):
         self.lzf_buffer_size = 262144
         self.stream = stream
@@ -11,13 +12,13 @@ class _BufferedRecordReader:
         self.has_var_fields = has_var_fields
         self.total_records = total_records
         if has_var_fields:
-            self.record_buffer = memoryview(bytearray(fixed_len + 4 + 1000))
+            self.record_buffer = memview(fixed_len + 4 + 1000)
         else:
-            self.record_buffer = memoryview(bytearray(fixed_len))
-        self.lzf_in = memoryview(bytearray(self.lzf_buffer_size))
-        self.lzf_out = memoryview(bytearray(self.lzf_buffer_size))
-        self.lzf = _Lzf(self.lzf_in, self.lzf_out)
-        self.lzf_length_buffer = memoryview(bytearray(4))
+            self.record_buffer = memview(fixed_len)
+        self.lzf_in = memview(self.lzf_buffer_size)
+        self.lzf_out = memview(self.lzf_buffer_size)
+        self.lzf = Lzf(self.lzf_in, self.lzf_out)
+        self.lzf_length_buffer = memview(4)
         self.current_record = 0
         self.record_buffer_index = 0
         self.lzf_out_size = 0
@@ -36,11 +37,11 @@ class _BufferedRecordReader:
         return True
 
     def _read_variable_record(self):
-        self._read(self.fixed_len+4)
+        self._read(self.fixed_len + 4)
         var_length = int.from_bytes(self.record_buffer[self.record_buffer_index-4:self.record_buffer_index], "little")
         if self.fixed_len + 4 + var_length > len(self.record_buffer):
             new_length = (self.fixed_len + 4 + var_length) * 2
-            new_buffer = memoryview(bytearray(new_length))
+            new_buffer = memview(new_length)
             new_buffer[:self.fixed_len+4] = self.record_buffer[:self.fixed_len+4]
             self.record_buffer = new_buffer
         self._read(var_length)

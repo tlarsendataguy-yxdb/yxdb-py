@@ -1,6 +1,7 @@
 import unittest
 
-from yxdb._buffered_record_reader import _BufferedRecordReader
+from yxdb._buffered_record_reader import BufferedRecordReader
+from yxdb._utility import memview
 
 
 class TestBufferedRecordReader(unittest.TestCase):
@@ -23,11 +24,11 @@ class TestBufferedRecordReader(unittest.TestCase):
 
 def generate_reader(path: str, fixed_len: int, has_var_fields: bool):
     stream = open(path, "rb")
-    header = memoryview(bytearray(512))
+    header = memview(512)
     stream.readinto(header)
     meta_info_size = int.from_bytes(header[80:84], 'little') * 2
     total_records = int.from_bytes(header[104:108], 'little')
     stream.seek(512 + meta_info_size)
-    return _BufferedRecordReader(stream, fixed_len, has_var_fields, total_records)
+    return BufferedRecordReader(stream, fixed_len, has_var_fields, total_records)
 
 
