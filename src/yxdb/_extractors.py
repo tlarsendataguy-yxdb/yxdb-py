@@ -1,5 +1,5 @@
+import datetime
 import struct
-from time import strptime
 
 
 def new_bool_extractor(start: int):
@@ -126,7 +126,7 @@ def _new_blob_extractor(start: int):
 
 def _parse_date(buffer: memoryview, start: int, length: int, fmt: str):
     value = str(buffer[start:start+length].tobytes(), 'utf_8')
-    return strptime(value, fmt)
+    return datetime.datetime.strptime(value, fmt)
 
 
 def _get_string(buffer: memoryview, start: int, field_len: int, char_size: int):
