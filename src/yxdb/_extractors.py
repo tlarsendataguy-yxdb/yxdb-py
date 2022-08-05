@@ -140,11 +140,12 @@ def _get_string(buffer: memoryview, start: int, field_len: int, char_size: int):
 def _get_end_of_string_pos(buffer: memoryview, start: int, field_len: int, char_size: int):
     field_to = start + (field_len * char_size)
     str_len = 0
-    i = 0
+    i = start
     while i < field_to:
         if buffer[i] == 0 and buffer[i + (char_size-1)] == 0:
             break
         str_len += 1
+        i += char_size
     return start + (str_len * char_size)
 
 
