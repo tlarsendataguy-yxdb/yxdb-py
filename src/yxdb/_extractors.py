@@ -56,7 +56,7 @@ def new_float_extractor(start: int):
     def e(buffer: memoryview):
         if buffer[start+4] == 1:
             return None
-        return struct.unpack_from('f', buffer, start)
+        return struct.unpack('f', buffer[start:start+4])[0]
     return e
 
 
@@ -64,7 +64,7 @@ def new_double_extractor(start: int):
     def e(buffer: memoryview):
         if buffer[start+8] == 1:
             return None
-        return struct.unpack_from('d', buffer, start)
+        return struct.unpack('d', buffer[start:start+8])[0]
     return e
 
 

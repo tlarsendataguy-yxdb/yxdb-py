@@ -39,7 +39,7 @@ class TestYxdbRecord(unittest.TestCase):
     def test_float_record(self):
         record = load_record_with_value_column("Float", 5)
         source = memview([205, 206, 140, 63, 0])
-        expected = struct.unpack('f', source[:4].tobytes())
+        expected = struct.unpack('f', source[:4].tobytes())[0]
 
         self.assertEqual(1, len(record.fields))
         self.assertEqual(DataType.DOUBLE, record.fields[0].data_type)
@@ -52,7 +52,7 @@ class TestYxdbRecord(unittest.TestCase):
     def test_double_record(self):
         record = load_record_with_value_column("Double", 9)
         source = memview([154, 155, 155, 155, 155, 155, 241, 63, 0])
-        expected = struct.unpack('d', source[:8].tobytes())
+        expected = struct.unpack('d', source[:8].tobytes())[0]
 
         self.assertEqual(expected, record.extract_from_index(0, source))
         self.assertEqual(9, record.fixed_size)

@@ -60,7 +60,7 @@ class TestExtractors(unittest.TestCase):
     def test_extract_float(self):
         extract = new_float_extractor(4)
         result = extract(memview([0, 0, 0, 0, 205, 206, 140, 63, 0, 0, 0, 0, 0]))
-        self.assertEqual(struct.unpack('f', bytes([205, 206, 140, 63])), result)
+        self.assertEqual(struct.unpack('f', bytes([205, 206, 140, 63]))[0], result)
 
     def test_extract_null_float(self):
         extract = new_float_extractor(4)
@@ -70,7 +70,7 @@ class TestExtractors(unittest.TestCase):
     def test_extract_double(self):
         extract = new_double_extractor(4)
         result = extract(memview([0, 0, 0, 0, 154, 155, 155, 155, 155, 155, 241, 63, 0]))
-        self.assertEqual(struct.unpack('d', bytes([154, 155, 155, 155, 155, 155, 241, 63])), result)
+        self.assertEqual(struct.unpack('d', bytes([154, 155, 155, 155, 155, 155, 241, 63]))[0], result)
 
     def test_extract_null_double(self):
         extract = new_double_extractor(4)

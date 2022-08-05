@@ -28,69 +28,69 @@ class YxdbRecord:
             if field.data_type == 'Int16':
                 self._add_extractor(field.name, DataType.LONG, _extractors.new_int16_extractor(start_at))
                 start_at += 3
-                break
+                continue
             if field.data_type == 'Int32':
                 self._add_extractor(field.name, DataType.LONG, _extractors.new_int32_extractor(start_at))
                 start_at += 5
-                break
+                continue
             if field.data_type == 'Int64':
                 self._add_extractor(field.name, DataType.LONG, _extractors.new_int64_extractor(start_at))
                 start_at += 9
-                break
+                continue
             if field.data_type == 'Float':
                 self._add_extractor(field.name, DataType.DOUBLE, _extractors.new_float_extractor(start_at))
                 start_at += 5
-                break
+                continue
             if field.data_type == 'Double':
                 self._add_extractor(field.name, DataType.DOUBLE, _extractors.new_double_extractor(start_at))
                 start_at += 9
-                break
+                continue
             if field.data_type == 'FixedDecimal':
                 size = field.size
                 self._add_extractor(field.name, DataType.DOUBLE, _extractors.new_fixed_decimal_extractor(start_at, size))
                 start_at += size + 1
-                break
+                continue
             if field.data_type == 'String':
                 size = field.size
                 self._add_extractor(field.name, DataType.STRING, _extractors.new_string_extractor(start_at, size))
                 start_at += size + 1
-                break
+                continue
             if field.data_type == 'WString':
                 size = field.size
                 self._add_extractor(field.name, DataType.STRING, _extractors.new_wstring_extractor(start_at, size))
                 start_at += (size * 2) + 1
-                break
+                continue
             if field.data_type == "V_String":
                 self._add_extractor(field.name, DataType.STRING, _extractors.new_v_string_extractor(start_at))
                 start_at += 4
                 self.has_var = True
-                break
+                continue
             if field.data_type == "V_WString":
                 self._add_extractor(field.name, DataType.STRING, _extractors.new_v_wstring_extractor(start_at))
                 start_at += 4
                 self.has_var = True
-                break
+                continue
             if field.data_type == "Date":
                 self._add_extractor(field.name, DataType.DATE, _extractors.new_date_extractor(start_at))
                 start_at += 11
-                break
+                continue
             if field.data_type == "DateTime":
                 self._add_extractor(field.name, DataType.DATE, _extractors.new_date_time_extractor(start_at))
                 start_at += 20
-                break
+                continue
             if field.data_type == "Bool":
                 self._add_extractor(field.name, DataType.BOOLEAN, _extractors.new_bool_extractor(start_at))
                 start_at += 1
-                break
+                continue
             if field.data_type == "Byte":
                 self._add_extractor(field.name, DataType.BYTE, _extractors.new_byte_extractor(start_at))
                 start_at += 2
-                break
+                continue
             if field.data_type == "Blob" or field.data_type == "SpatialObj":
                 self._add_extractor(field.name, DataType.BLOB, _extractors.new_blob_extractor(start_at))
                 start_at += 4
                 self.has_var = True
-                break
+                continue
             raise NameError
         self.fixed_size = start_at
 
