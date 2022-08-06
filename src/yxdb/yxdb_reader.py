@@ -9,7 +9,30 @@ from yxdb.yxdb_field import YxdbField
 
 
 class YxdbReader:
+    """
+    YxdbReader contains the public API for reading YXDB files
+
+    Instantiate YxdbReader with either a string containing the path to a YXDB file,
+    or with a BytesIO object containing an in-memory stream of a YXDB file.
+
+    Use the next() method to iterate records.
+
+    Access fields using the following methods:
+        * read_index(): read by field index
+        * read_name(): read by the name of the field
+
+    The value returned will be a data type appropriate for that field.
+
+    Use the list_fields() method to obtain the list of fields in the YXDB file.
+    """
+
     def __init__(self, *args, **kwargs):
+        """
+        Instantiate a YXDB reader with 1 of the following parameters:
+            * path: a string containing the path to a YXDB file
+            * stream: a BytesIO object that streams a YXDB file
+        """
+
         stream: BytesIO = kwargs.get('stream', None)
         path: str = kwargs.get('path', None)
         if stream is None and path is None:
@@ -33,18 +56,28 @@ class YxdbReader:
         self._load_header_and_meta_info()
 
     def next(self) -> bool:
+        """Returns True if a record is available and False if the end of the file is reached."""
+
         return self._record_reader.next_record()
 
     def read_index(self, index: int):
+        """Returns the value in a field, specified by the field's index."""
+
         return self._record.extract_from_index(index, self._record_reader.record_buffer)
 
     def read_name(self, name: str):
+        """Returns the value in a field, specified by the field's name"""
+
         return self._record.extract_from_name(name, self._record_reader.record_buffer)
 
     def list_fields(self) -> List[YxdbField]:
+        """Provides the list of fields in the YXDB file"""
+
         return self._record.fields
 
     def close(self):
+        """Closes the YXDB stream early."""
+
         self._stream.close()
 
     def _load_header_and_meta_info(self):
