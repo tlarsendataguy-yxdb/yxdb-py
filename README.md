@@ -2,11 +2,13 @@
 
 yxdb-py is a library for reading YXDB files into Python.
 
+install using `pip install yxdb`
+
 The library does not have external dependencies and is a pure Python solution.
 
 The public API is contained in the YxdbReader class. Instantiate YxdbReader with the following constructors:
-* `YxdbReader(String)` - load from a file
-* `YxdbReader(BytesIO)` - load from an in-memory stream
+* `YxdbReader(path=str)` - load from a file
+* `YxdbReader(stream=BytesIO)` - load from an in-memory stream
 
 Iterate through the records in the file using the `next()` method in a while loop:
 

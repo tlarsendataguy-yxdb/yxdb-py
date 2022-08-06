@@ -83,7 +83,7 @@ class YxdbReader:
     def _load_header_and_meta_info(self):
         header = self._get_header()
         self.num_records = int.from_bytes(header[104:108], 'little')
-        self._meta_info_size = int.from_bytes(header[80:94], 'little')
+        self._meta_info_size = int.from_bytes(header[80:84], 'little')
         self._load_meta_info()
         self._record = YxdbRecord(self._fields)
         self._record_reader = BufferedRecordReader(self._stream, self._record.fixed_size, self._record.has_var, self.num_records)
@@ -106,7 +106,11 @@ class YxdbReader:
 
     def _get_fields(self):
         root = ET.fromstring(self.meta_info_str)
-        for field in root.iter(tag="Field"):
+        if root.tag == "RecordInfo":
+            record_info = root
+        else:
+            record_info = root.find("RecordInfo")
+        for field in record_info.iter(tag="Field"):
             name = _parse_string(field.get("name"))
             data_type = _parse_string(field.get("type"))
             size = _parse_int(field.get("size"))

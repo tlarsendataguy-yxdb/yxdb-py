@@ -1,6 +1,6 @@
 [project]
 name = "yxdb"
-version = "0.0.1"
+version = "0.0.3"
 authors = [
   { name="tlarsendataguy", email="tom@tlarsendataguy.com" },
 ]
