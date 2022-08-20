@@ -16,9 +16,13 @@ class YxdbRecord:
         self._initialize(fields)
 
     def extract_from_index(self, index: int, buffer: memoryview):
+        if index < 0 or index >= len(self._extractors):
+            raise Exception(f"index {index} is not a valid field index")
         return self._extractors[index](buffer)
 
     def extract_from_name(self, name: str, buffer: memoryview):
+        if name not in self._name_to_index:
+            raise Exception(f"'{name}' is not a valid field name")
         index = self._name_to_index[name]
         return self._extractors[index](buffer)
 

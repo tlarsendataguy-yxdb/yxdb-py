@@ -1,4 +1,5 @@
 import datetime
+import traceback
 import unittest
 
 from yxdb.yxdb_reader import YxdbReader
@@ -80,6 +81,42 @@ class TestYxdbReader(unittest.TestCase):
             if yxdb.read_name("Prefix") == "Mr":
                 mr_count += 1
         self.assertEqual(4068, mr_count)
+
+    def test_invalid_file(self):
+        try:
+            path = "./test_files/invalid.txt"
+            YxdbReader(path=path)
+        except Exception as e:
+            self.assertEqual("file is not a valid YXDB format", str(e))
+            traceback.print_exc()
+
+    def test_small_invalid_file(self):
+        try:
+            path = "./test_files/invalidSmall.txt"
+            YxdbReader(path=path)
+        except Exception as e:
+            self.assertEqual("file is not a valid YXDB format", str(e))
+            traceback.print_exc()
+
+    def test_invalid_field_index(self):
+        try:
+            path = "./test_files/TutorialData.yxdb"
+            yxdb = YxdbReader(path=path)
+            yxdb.next()
+            yxdb.read_index(1000)
+        except Exception as e:
+            self.assertEqual("index 1000 is not a valid field index", str(e))
+            traceback.print_exc()
+
+    def test_invalid_field_name(self):
+        try:
+            path = "./test_files/TutorialData.yxdb"
+            yxdb = YxdbReader(path=path)
+            yxdb.next()
+            yxdb.read_name("invalid field")
+        except Exception as e:
+            self.assertEqual("'invalid field' is not a valid field name", str(e))
+            traceback.print_exc()
 
 
 if __name__ == '__main__':

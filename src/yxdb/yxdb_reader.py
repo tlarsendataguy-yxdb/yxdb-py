@@ -53,7 +53,10 @@ class YxdbReader:
         self._record: YxdbRecord = None
         self._record_reader: BufferedRecordReader = None
 
-        self._load_header_and_meta_info()
+        try:
+            self._load_header_and_meta_info()
+        except Exception:
+            raise Exception("file is not a valid YXDB format")
 
     def next(self) -> bool:
         """Returns True if a record is available and False if the end of the file is reached."""
