@@ -51,14 +51,14 @@ class Lzf:
         reference -= self.in_bytes[self.iidx]
         self.iidx += 1
 
-        reference = self._copy_from_reference_and_increment(reference)
-        reference = self._copy_from_reference_and_increment(reference)
+        length += 2
 
         while length > 0:
-            reference = self._copy_from_reference_and_increment(reference)
-            length -= 1
+            size = min(self.oidx - reference, length)
+            reference = self._copy_from_reference_and_increment(reference, size)
+            length -= size
 
-    def _copy_from_reference_and_increment(self, reference: int) -> int:
-        self.out_bytes[self.oidx] = self.out_bytes[reference]
-        self.oidx += 1
-        return reference + 1
+    def _copy_from_reference_and_increment(self, reference: int, size: int) -> int:
+        self.out_bytes[self.oidx:self.oidx+size] = self.out_bytes[reference:reference+size]
+        self.oidx += size
+        return reference + size
