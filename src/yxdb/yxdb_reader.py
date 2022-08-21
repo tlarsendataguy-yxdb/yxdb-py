@@ -7,6 +7,8 @@ from yxdb._metainfo_field import MetaInfoField
 from yxdb._yxdb_record import YxdbRecord
 from yxdb.yxdb_field import YxdbField
 
+invalid_yxdb_msg = "file is not a valid YXDB format"
+
 
 class YxdbReader:
     """
@@ -56,7 +58,7 @@ class YxdbReader:
         try:
             self._load_header_and_meta_info()
         except Exception:
-            raise Exception("file is not a valid YXDB format")
+            raise Exception(invalid_yxdb_msg)
 
     def next(self) -> bool:
         """Returns True if a record is available and False if the end of the file is reached."""
@@ -85,6 +87,10 @@ class YxdbReader:
 
     def _load_header_and_meta_info(self):
         header = self._get_header()
+        file_type = str(header[0:21].tobytes(), 'utf_8')
+        if "Alteryx Database File" != file_type:
+            self._close_stream_and_raise()
+
         self.num_records = int.from_bytes(header[104:108], 'little')
         self._meta_info_size = int.from_bytes(header[80:84], 'little')
         self._load_meta_info()
@@ -123,7 +129,7 @@ class YxdbReader:
 
     def _close_stream_and_raise(self):
         self._stream.close()
-        raise IOError("file is not a valid YXDB")
+        raise IOError(invalid_yxdb_msg)
 
 
 def _parse_int(value) -> int:
