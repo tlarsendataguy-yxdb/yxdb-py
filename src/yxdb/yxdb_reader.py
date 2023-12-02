@@ -87,7 +87,7 @@ class YxdbReader:
 
     def _load_header_and_meta_info(self):
         header = self._get_header()
-        file_type = str(header[0:21].tobytes(), 'utf_8')
+        file_type = str(header[0:21].tobytes(), 'latin1')
         if "Alteryx Database File" != file_type:
             self._close_stream_and_raise()
 

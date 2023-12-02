@@ -105,7 +105,7 @@ def new_v_string_extractor(start: int):
         blob = _parse_blob(buffer, start)
         if blob is None:
             return None
-        return str(blob, "utf_8")
+        return str(blob, "latin1")
     return e
 
 
@@ -125,14 +125,14 @@ def new_blob_extractor(start: int):
 
 
 def _parse_date(buffer: memoryview, start: int, length: int, fmt: str):
-    value = str(buffer[start:start+length].tobytes(), 'utf_8')
+    value = str(buffer[start:start+length].tobytes(), 'latin1')
     return datetime.datetime.strptime(value, fmt)
 
 
 def _get_string(buffer: memoryview, start: int, field_len: int, char_size: int):
     end = _get_end_of_string_pos(buffer, start, field_len, char_size)
     if char_size == 1:
-        return str(buffer[start:end].tobytes(), 'utf_8')
+        return str(buffer[start:end].tobytes(), 'latin1')
     else:
         return str(buffer[start:end].tobytes(), 'utf_16_le')
 
