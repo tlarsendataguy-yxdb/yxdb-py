@@ -74,6 +74,7 @@ class BufferedRecordReader:
         if checkbit > 0:
             lzf_block_length &= 0x7fffffff
             self.stream.readinto(self.lzf_out[:lzf_block_length])
+            return lzf_block_length
         else:
             read_in = self.stream.readinto(self.lzf_in[:lzf_block_length])
             return self.lzf.decompress(read_in)
