@@ -7,6 +7,20 @@ _bytes_per_point = 16
 
 
 def to_geojson(value: bytes) -> str:
+    """
+    to_geojson translates SpatialObj fields into GeoJSON.
+
+    Alteryx stores spatial objects in a binary format.
+    This function reads the binary format and converts it to a GeoJSON string.
+
+    :param value: The object read from a SpatialObj field
+    :return: A GeoJSON string representing the spatial object
+    :raises TypeError: The blob is not a valid spatial object
+    """
+    if value is None:
+        return None
+    if len(value) < 20:
+        raise TypeError('blob is not a spatial object')
     obj_type = int.from_bytes(value[0:4], byteorder='little')
     if obj_type == 8:
         return _parse_points(value)
@@ -14,6 +28,7 @@ def to_geojson(value: bytes) -> str:
         return _parse_lines(value)
     if obj_type == 5:
         return _parse_poly(value)
+    raise TypeError("blob is not a spatial object")
 
 
 def _parse_points(value: bytes) -> str:
@@ -27,18 +42,18 @@ def _parse_lines(value: bytes) -> str:
     lines = _parse_multipoint_objects(value)
 
     if len(lines) == 1:
-        return _to_geojson('LineString', lines[0])
+        return _geojson('LineString', lines[0])
 
-    return _to_geojson('MultiLineString', lines)
+    return _geojson('MultiLineString', lines)
 
 
 def _parse_poly(value: bytes) -> str:
     poly = _parse_multipoint_objects(value)
 
     if len(poly) == 1:
-        return _to_geojson('Polygon', poly)
+        return _geojson('Polygon', poly)
 
-    return _to_geojson('MultiPolygon', [poly])
+    return _geojson('MultiPolygon', [poly])
 
 
 def _parse_multipoint_objects(value: bytes) -> List:
@@ -58,7 +73,7 @@ def _parse_multipoint_objects(value: bytes) -> List:
 def _parse_single_point(value: bytes) -> str:
     lng = struct.unpack('d', value[40:48])[0]
     lat = struct.unpack('d', value[48:56])[0]
-    return _to_geojson('Point', [lng, lat])
+    return _geojson('Point', [lng, lat])
 
 
 def _parse_multi_point(value: bytes) -> str:
@@ -67,7 +82,7 @@ def _parse_multi_point(value: bytes) -> str:
     while i < len(value):
         points.append(_get_coord_at(value, i))
         i += _bytes_per_point
-    return _to_geojson('MultiPoint', points)
+    return _geojson('MultiPoint', points)
 
 
 def _get_coord_at(value: bytes, at: int) -> List[float]:
@@ -91,7 +106,7 @@ def _get_ending_indices(value: bytes) -> List[int]:
     return ending_indices
 
 
-def _to_geojson(obj_type: str, obj) -> str:
+def _geojson(obj_type: str, obj) -> str:
     obj = {
         "type": obj_type,
         "coordinates": obj

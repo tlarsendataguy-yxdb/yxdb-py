@@ -40,6 +40,19 @@ class TestSpatialReaders(unittest.TestCase):
         path = './test_files/multi-poly-holes.yxdb'
         self._test_spatial(path, expected)
 
+    def test_null_spatial(self):
+        expected = None
+        path = './test_files/null-spatial.yxdb'
+        self._test_spatial(path, expected)
+
+    def test_invalid_object_type(self):
+        data = b'\x01\x00\x00\x00\xf4\xde\x18\x02\x80+X\xc02\xadMc{\x9dB@\xf4\xde\x18\x02\x80+X\xc02\xadMc{\x9dB@\x01\x00\x00\x00\xf4\xde\x18\x02\x80+X\xc02\xadMc{\x9dB@'
+        self.assertRaises(TypeError, lambda: to_geojson(data))
+
+    def test_file_too_short(self):
+        data = b'\x03\x00\x00\x00'
+        self.assertRaises(TypeError, lambda: to_geojson(data))
+
     def _test_spatial(self, path, expected):
         yxdb = YxdbReader(path=path)
         while yxdb.next():
