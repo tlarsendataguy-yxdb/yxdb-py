@@ -12,6 +12,8 @@ def to_geojson(value: bytes) -> str:
         return _parse_points(value)
     if obj_type == 3:
         return _parse_lines(value)
+    if obj_type == 5:
+        return _parse_poly(value)
 
 
 def _parse_points(value: bytes) -> str:
@@ -22,39 +24,41 @@ def _parse_points(value: bytes) -> str:
 
 
 def _parse_lines(value: bytes) -> str:
+    lines = _parse_multipoint_objects(value)
+
+    if len(lines) == 1:
+        return _to_geojson('LineString', lines[0])
+
+    return _to_geojson('MultiLineString', lines)
+
+
+def _parse_poly(value: bytes) -> str:
+    poly = _parse_multipoint_objects(value)
+
+    if len(poly) == 1:
+        return _to_geojson('Polygon', poly)
+
+    return _to_geojson('MultiPolygon', [poly])
+
+
+def _parse_multipoint_objects(value: bytes) -> List:
     ending_indices = _get_ending_indices(value)
 
     i = 48 + (len(ending_indices) * 4) - 4
-    lines = []
+    objects = []
     for end_at in ending_indices:
         line = []
         while i < end_at:
             line.append(_get_coord_at(value, i))
             i += _bytes_per_point
-        lines.append(line)
-
-    obj_label = 'MultiLineString'
-
-    total_lines = len(ending_indices)
-    if total_lines == 1:
-        obj_label = 'LineString'
-        lines = lines[0]
-
-    obj = {
-        "type": obj_label,
-        "coordinates": lines
-    }
-    return json.dumps(obj)
+        objects.append(line)
+    return objects
 
 
 def _parse_single_point(value: bytes) -> str:
     lng = struct.unpack('d', value[40:48])[0]
     lat = struct.unpack('d', value[48:56])[0]
-    obj = {
-        "type": "Point",
-        "coordinates": [lng, lat]
-    }
-    return json.dumps(obj)
+    return _to_geojson('Point', [lng, lat])
 
 
 def _parse_multi_point(value: bytes) -> str:
@@ -63,11 +67,7 @@ def _parse_multi_point(value: bytes) -> str:
     while i < len(value):
         points.append(_get_coord_at(value, i))
         i += _bytes_per_point
-    obj = {
-        "type": "MultiPoint",
-        "coordinates": points
-    }
-    return json.dumps(obj)
+    return _to_geojson('MultiPoint', points)
 
 
 def _get_coord_at(value: bytes, at: int) -> List[float]:
@@ -89,3 +89,11 @@ def _get_ending_indices(value: bytes) -> List[int]:
         i += 4
     ending_indices.append((total_points * _bytes_per_point) + start_at)
     return ending_indices
+
+
+def _to_geojson(obj_type: str, obj) -> str:
+    obj = {
+        "type": obj_type,
+        "coordinates": obj
+    }
+    return json.dumps(obj)
