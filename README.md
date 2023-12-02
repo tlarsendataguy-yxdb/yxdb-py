@@ -20,3 +20,5 @@ while reader.next():
 Fields can be access via the `read_index()` and `read_name()` methods on the YxdbReader class.
 
 The list of fields in the YXDB file can be access via the `list_fields()` method.
+
+To read spatial objects, use the `yxdb.spatial.to_geojson()` function. The `to_geojson()` function translates the binary SpatialObj format into a GeoJSON string.
