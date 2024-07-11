@@ -14,6 +14,16 @@ class TestExtractors(unittest.TestCase):
         result = extract(memview([0, 0, 10, 0, 1, 0]))
         self.assertEqual(None, result)
 
+    def test_extract_negative_one_int16(self):
+        extract = new_int16_extractor(4)
+        result = extract(memview([0, 0, 0, 0, 255, 255, 0]))
+        self.assertEqual(-1, result)
+
+    def test_extract_negative_max_int16(self):
+        extract = new_int16_extractor(4)
+        result = extract(memview([0, 0, 0, 0, 0, 128, 0]))
+        self.assertEqual(-2**15, result)
+
     def test_extract_int32(self):
         extract = new_int32_extractor(3)
         result = extract(memview([0, 0, 0, 10, 0, 0, 0, 0]))
@@ -24,6 +34,16 @@ class TestExtractors(unittest.TestCase):
         result = extract(memview([0, 0, 0, 10, 0, 0, 0, 1]))
         self.assertEqual(None, result)
 
+    def test_extract_negative_one_int32(self):
+        extract = new_int32_extractor(4)
+        result = extract(memview([0, 0, 0, 0, 255, 255, 255, 255, 0]))
+        self.assertEqual(-1, result)
+
+    def test_extract_negative_max_int32(self):
+        extract = new_int32_extractor(4)
+        result = extract(memview([0, 0, 0, 0, 0, 0, 0, 128, 0]))
+        self.assertEqual(-2**31, result)        
+
     def test_extract_int64(self):
         extract = new_int64_extractor(4)
         result = extract(memview([0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 0]))
@@ -33,6 +53,16 @@ class TestExtractors(unittest.TestCase):
         extract = new_int64_extractor(4)
         result = extract(memview([0, 0, 0, 0, 10, 0, 0, 0, 0, 0, 0, 0, 1]))
         self.assertEqual(None, result)
+
+    def test_extract_negative_one_int64(self):
+        extract = new_int64_extractor(4)
+        result = extract(memview([0, 0, 0, 0, 255, 255, 255, 255, 255, 255, 255, 255, 0]))
+        self.assertEqual(-1, result)
+
+    def test_extract_negative_max_int64(self):
+        extract = new_int64_extractor(4)
+        result = extract(memview([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0]))
+        self.assertEqual(-2**63, result)
 
     def test_extract_bool(self):
         extract = new_bool_extractor(4)

@@ -23,7 +23,7 @@ def new_int16_extractor(start: int):
     def e(buffer: memoryview):
         if buffer[start+2] == 1:
             return None
-        return int.from_bytes(buffer[start:start+2], 'little')
+        return int.from_bytes(buffer[start:start+2], byteorder='little', signed=True)
     return e
 
 
@@ -31,7 +31,7 @@ def new_int32_extractor(start: int):
     def e(buffer: memoryview):
         if buffer[start+4] == 1:
             return None
-        return int.from_bytes(buffer[start:start+4], 'little')
+        return int.from_bytes(buffer[start:start+4], byteorder='little', signed=True)
     return e
 
 
@@ -39,7 +39,7 @@ def new_int64_extractor(start: int):
     def e(buffer: memoryview):
         if buffer[start+8] == 1:
             return None
-        return int.from_bytes(buffer[start:start+8], 'little')
+        return int.from_bytes(buffer[start:start+8], byteorder='little', signed=True)
     return e
 
 
